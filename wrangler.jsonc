@@ -12,6 +12,10 @@
     "not_found_handling": "404-page"
   },
 
+  // A custom domain on a zone already in this Cloudflare account, so the DNS
+  // record and certificate are created automatically.
+  "routes": [{ "pattern": "invest.adembrouri.com", "custom_domain": true }],
+
   "observability": {
     "enabled": true
   }

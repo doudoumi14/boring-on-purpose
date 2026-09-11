@@ -1,5 +1,7 @@
 # Boring on Purpose
 
+**Live: https://invest.adembrouri.com**
+
 A free tool that turns five questions into a plain, index-fund retirement plan — in about five minutes, with no signup and nothing stored.
 
 It exists because of a specific frustration: people approaching retirement pay someone a percentage of their savings every year to pick stocks, when the evidence says a broad-market index fund would serve them better. As Warren Buffett has pointed out, the reason nobody tells them this is that **nobody gets paid to.**
