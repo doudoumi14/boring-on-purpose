@@ -41,6 +41,18 @@ export interface Country {
   examples: { name: string; ticker?: string; note: string }[];
   /** The specific way people in this country get separated from their money. */
   pitfall: string;
+  /**
+   * The bond side. Named separately because "10% in bonds" means nothing to
+   * someone who has never bought one, and because the answer is more
+   * country-specific than the equity side: a French saver's safe money
+   * usually sits in a fonds euros, not a bond ETF.
+   */
+  bondExamples: { name: string; ticker?: string; note: string }[];
+  /**
+   * Two things people get wrong here: doubling up on bonds they already own
+   * inside an all-in-one fund, and buying foreign bonds unhedged.
+   */
+  bondNote: string;
   /** Where to look up the actual state pension entitlement. */
   statePension: { name: string; lookup: string };
 }
@@ -67,6 +79,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "Bank-branded mutual funds routinely charge 2% a year or more, and are what you will be offered if you walk into a branch and ask. A high-interest savings account is not investing either — over thirty years it loses to inflation.",
+    bondExamples: [
+      { name: "Vanguard Canadian Aggregate Bond Index ETF", ticker: "VAB", note: "A broad mix of Canadian government and company bonds." },
+      { name: "BMO Aggregate Bond Index ETF", ticker: "ZAG", note: "The same idea from another provider." },
+      { name: "iShares Core Canadian Universe Bond Index ETF", ticker: "XBB", note: "Also fine. These three are near-identical." },
+    ],
+    bondNote:
+      "If you hold an all-in-one fund like VGRO or VBAL, the bonds are already inside it — do not buy more separately. Buy Canadian-dollar bonds, or foreign bonds that are currency-hedged: an unhedged foreign bond fund is mostly a bet on exchange rates, which is the opposite of why you hold bonds.",
     statePension: { name: "CPP + OAS", lookup: "canada.ca — My Service Canada Account gives your actual CPP estimate" },
   },
   {
@@ -91,6 +110,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "A 401(k) menu often buries one cheap index fund among expensive actively managed ones — look for the lowest expense ratio with 'index' or 'S&P 500' in the name. And be wary of whole-life insurance sold as an investment; it usually is not one.",
+    bondExamples: [
+      { name: "Vanguard Total Bond Market ETF", ticker: "BND", note: "Essentially the whole US bond market in one fund." },
+      { name: "iShares Core U.S. Aggregate Bond ETF", ticker: "AGG", note: "The same exposure from another provider." },
+      { name: "Fidelity U.S. Bond Index Fund", ticker: "FXNAX", note: "A mutual fund version, if that suits your account better." },
+    ],
+    bondNote:
+      "A target-date fund already holds bonds for you — do not buy more on top. Buy bonds in your own currency, or hedged: an unhedged foreign bond fund is mostly a bet on exchange rates, which defeats the purpose of holding bonds at all.",
     statePension: { name: "Social Security", lookup: "ssa.gov — your statement shows your projected benefit" },
   },
   {
@@ -114,6 +140,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "The platform charges a fee on top of the fund's fee — check both. Avoid 'with-profits' and any adviser offering to manage your ISA for a percentage; the tax shelter is free and the fund choice takes ten minutes.",
+    bondExamples: [
+      { name: "Vanguard Global Aggregate Bond UCITS ETF (GBP Hedged)", ticker: "VAGP", note: "Government and company bonds worldwide, hedged back to pounds." },
+      { name: "Vanguard Global Bond Index Fund (GBP Hedged)", note: "The fund version of the same thing." },
+      { name: "iShares Core UK Gilts UCITS ETF", ticker: "IGLT", note: "UK government bonds only — simpler, and no currency involved." },
+    ],
+    bondNote:
+      "A LifeStrategy fund already contains bonds — do not double up. Take the GBP-hedged version of any global bond fund: unhedged, you are mostly betting on exchange rates rather than holding something steady.",
     statePension: { name: "State Pension", lookup: "gov.uk/check-state-pension" },
   },
   {
@@ -137,6 +170,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "World trackers inside a PEA are synthetic by necessity — the fund holds a basket of European shares and swaps its performance for the world index, because a PEA cannot hold non-European stocks directly. That is normal, not a red flag. The real trap is assurance-vie contracts stacked with frais de gestion plus unités de compte at 2% a year.",
+    bondExamples: [
+      { name: "Fonds euros (inside an assurance-vie)", note: "The classic French safe holding: capital guaranteed by the insurer. For most people this is the bond side, and no ETF is needed." },
+      { name: "Amundi Euro Government Bond UCITS ETF", note: "Euro-zone government bonds, for a compte-titres or some PER contracts." },
+      { name: "iShares Core Global Aggregate Bond UCITS ETF (EUR Hedged)", ticker: "AGGH", note: "Worldwide bonds hedged to euros." },
+    ],
+    bondNote:
+      "Bonds do not belong in a PEA — it is an equity wrapper. In France the steady part usually sits in the fonds euros of an assurance-vie instead, which does the same job. If you do buy a bond ETF, take the euro-hedged version: unhedged, it is mostly a bet on exchange rates.",
     statePension: { name: "Retraite de base + complémentaire", lookup: "info-retraite.fr — your consolidated estimate" },
   },
   {
@@ -159,6 +199,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "A bank Sparplan on an actively managed fund can carry an Ausgabeaufschlag of up to 5% before you have earned anything, plus a yearly fee. A broker Sparplan into a broad ETF often costs nothing per trade.",
+    bondExamples: [
+      { name: "iShares Core Global Aggregate Bond UCITS ETF (EUR Hedged)", ticker: "AGGH", note: "Worldwide government and company bonds, hedged to euros." },
+      { name: "Xtrackers Eurozone Government Bond UCITS ETF", note: "Euro-zone government bonds only." },
+      { name: "Tagesgeld or Festgeld", note: "For shorter horizons, a plain deposit account does the same job with no price swings." },
+    ],
+    bondNote:
+      "Always take the EUR-hedged share class of a global bond fund: unhedged, you are mostly betting on the dollar rather than holding something steady. For money you need within a few years, Tagesgeld is often the better answer than a bond fund.",
     statePension: { name: "Gesetzliche Rente", lookup: "deutsche-rentenversicherung.de — your Renteninformation" },
   },
   {
@@ -181,6 +228,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "Retail super funds can quietly charge several times what an indexed option costs inside the same fund. Log in, find the indexed international option, and compare the fee — it is usually the single highest-value thing you can do in an afternoon.",
+    bondExamples: [
+      { name: "Vanguard Australian Fixed Interest Index ETF", ticker: "VAF", note: "Australian government and company bonds in one fund." },
+      { name: "Vanguard Australian Government Bond Index ETF", ticker: "VGB", note: "Government bonds only — the steadier of the two." },
+      { name: "Vanguard Global Aggregate Bond Index (Hedged)", ticker: "VBND", note: "Worldwide bonds hedged back to Australian dollars." },
+    ],
+    bondNote:
+      "VDHG already includes bonds; DHHF deliberately does not. Check which you hold before adding more. Your super fund also holds bonds on your behalf in most options. Always take the hedged version of a global bond fund.",
     statePension: { name: "Age Pension", lookup: "servicesaustralia.gov.au" },
   },
   {
@@ -202,6 +256,13 @@ export const countries: Country[] = [
     ],
     pitfall:
       "If you are not a US person, be careful buying US-domiciled ETFs: they can expose your estate to US tax above a low threshold, and many European brokers cannot sell them to you at all. Look for a fund domiciled in Ireland or Luxembourg (usually marked UCITS).",
+    bondExamples: [
+      { name: "A broad government bond fund in your own currency", note: "Look for aggregate, government or total bond in the name." },
+      { name: "A global aggregate bond fund, hedged to your currency", note: "Hedged matters far more for bonds than it does for shares." },
+      { name: "A plain savings or deposit account", note: "For money you need within a few years, this does the same job with no price swings." },
+    ],
+    bondNote:
+      "If you hold an all-in-one or target-date fund, the bonds are already inside it — do not buy more separately. And always take the version hedged to the currency you spend: an unhedged foreign bond fund is mostly a bet on exchange rates, which is the opposite of why you hold bonds.",
     statePension: { name: "State pension", lookup: "Your national pension authority" },
   },
 ];

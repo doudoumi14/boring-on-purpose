@@ -60,7 +60,7 @@ async function answerRisk(page: Page, which: "low" | "mid" | "high") {
     high: [/put more in while prices are low/i, /running out of money/i, /i did not sell/i],
   } as const;
   for (const label of sets[which]) await page.getByRole("button", { name: label }).click();
-  await expect(page.getByText("Your plan")).toBeVisible();
+  await expect(page.getByText("Your plan").first()).toBeVisible();
 }
 
 function equityPct(text: string) {
@@ -177,6 +177,27 @@ test.describe("Boring on Purpose", () => {
     await expect(page.getByText("VTI")).toHaveCount(0);
   });
 
+  test("names bond funds too, not just the share side", async ({ page }) => {
+    await page.goto("/");
+    await fillWizard(page, { country: "CA" });
+    await answerRisk(page, "mid");
+
+    await expect(page.getByText(/the steady part/i).first()).toBeVisible();
+    await expect(page.getByText("VAB")).toBeVisible();
+    await expect(page.getByText("ZAG")).toBeVisible();
+    // The two things people get wrong: doubling up, and going unhedged.
+    await expect(page.getByText(/already inside it/i)).toBeVisible();
+    await expect(page.getByText(/bet on exchange rates/i)).toBeVisible();
+  });
+
+  test("tells French users bonds do not belong in a PEA", async ({ page }) => {
+    await page.goto("/");
+    await fillWizard(page, { country: "FR" });
+    await answerRisk(page, "mid");
+    await expect(page.getByText(/Fonds euros/i).first()).toBeVisible();
+    await expect(page.getByText(/do not belong in a PEA/i)).toBeVisible();
+  });
+
   test("teaches the criteria, not just the tickers", async ({ page }) => {
     await page.goto("/");
     await fillWizard(page);
@@ -238,7 +259,7 @@ test.describe("Boring on Purpose", () => {
       await page.getByRole("button", { name: l }).click();
     }
 
-    await expect(page.getByText("Votre plan")).toBeVisible();
+    await expect(page.getByText("Votre plan").first()).toBeVisible();
     await expect(page.getByText("PEA").first()).toBeVisible();
     await expect(page.getByText("CW8")).toBeVisible();
     await expect(page.getByText(/synthétiques/)).toBeVisible();

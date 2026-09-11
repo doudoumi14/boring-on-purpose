@@ -15,6 +15,7 @@ describe("country translations", () => {
       const fr = countriesFr[c.code];
       expect(fr.accounts, c.code).toHaveLength(c.accounts.length);
       expect(fr.examples, c.code).toHaveLength(c.examples.length);
+      expect(fr.bondExamples, c.code).toHaveLength(c.bondExamples.length);
     }
   });
 
@@ -22,6 +23,9 @@ describe("country translations", () => {
     for (const c of countries) {
       const fr = countriesFr[c.code];
       expect(fr.examples.map((e) => e.ticker), c.code).toEqual(c.examples.map((e) => e.ticker));
+      expect(fr.bondExamples.map((e) => e.ticker), c.code).toEqual(
+        c.bondExamples.map((e) => e.ticker),
+      );
     }
   });
 
@@ -30,6 +34,7 @@ describe("country translations", () => {
       const fr = countriesFr[c.code];
       expect(fr.pitfall, c.code).not.toBe(c.pitfall);
       expect(fr.fundGuidance, c.code).not.toBe(c.fundGuidance);
+      expect(fr.bondNote, c.code).not.toBe(c.bondNote);
     }
   });
 
@@ -41,6 +46,24 @@ describe("country translations", () => {
   it("carries the French preposition, since a template cannot guess it", () => {
     expect(getCountry("FR", "fr").inCountry).toBe("en France");
     expect(getCountry("CA", "fr").inCountry).toBe("au Canada");
+  });
+
+  it("gives every country bond examples, not just equity ones", () => {
+    for (const c of countries) {
+      expect(c.bondExamples.length, c.code).toBeGreaterThanOrEqual(2);
+      expect(c.bondNote.length, c.code).toBeGreaterThan(40);
+    }
+  });
+
+  it("warns about currency hedging, which matters far more for bonds", () => {
+    for (const c of countries) {
+      const text = `${c.bondNote} ${c.bondExamples.map((b) => b.note).join(" ")}`.toLowerCase();
+      expect(text, c.code).toMatch(/hedg|currency|exchange rate|fonds euros|deposit/);
+    }
+  });
+
+  it("does not put bonds in a PEA, which is an equity-only wrapper", () => {
+    expect(getCountry("FR", "en").bondNote).toMatch(/not belong in a PEA/i);
   });
 
   it("falls back to English for an unknown code rather than throwing", () => {

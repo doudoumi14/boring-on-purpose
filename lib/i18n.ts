@@ -149,6 +149,9 @@ export const dict = {
       lede: (country: string) =>
         `The hard part is usually the gap between "buy a broad fund" and knowing which one. These are examples you can buy ${country}. They are examples, not recommendations — within this type, they are almost interchangeable, which is the point.`,
       trap: (country: string) => `The trap to avoid ${country}`,
+      bondsTitle: "And the bonds — the steady part",
+      bondsLede:
+        "Bonds are the calmer half of your plan. You are lending money rather than owning companies, so it grows slowly and falls much less when markets drop. That is the whole job: stopping a crash from forcing you to sell at the worst moment.",
       criteriaTitle: "How to spot a good one yourself",
       criteriaLede:
         "Fund names and prices change. These five questions do not. Use them on anything you are offered, including by your own bank.",
@@ -371,6 +374,9 @@ export const dict = {
       lede: (country: string) =>
         `Le plus dur, c'est souvent l'écart entre « achetez un fonds large » et savoir lequel. Voici des exemples disponibles ${country}. Ce sont des exemples, pas des recommandations — dans cette catégorie ils sont presque interchangeables, et c'est justement le principe.`,
       trap: (country: string) => `Le piège à éviter ${country}`,
+      bondsTitle: "Et les obligations — la partie stable",
+      bondsLede:
+        "Les obligations sont la moitié tranquille de votre plan. Vous prêtez de l'argent au lieu de posséder des entreprises : cela rapporte peu, mais baisse beaucoup moins quand les marchés chutent. C'est tout leur rôle : éviter qu'un krach vous force à vendre au pire moment.",
       criteriaTitle: "Comment reconnaître un bon fonds vous-même",
       criteriaLede:
         "Les noms et les prix des fonds changent. Ces cinq questions, non. Posez-les sur tout ce qu'on vous propose, y compris à votre banque.",

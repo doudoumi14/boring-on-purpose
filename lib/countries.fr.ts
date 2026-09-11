@@ -11,7 +11,14 @@ import type { Country } from "./countries";
  */
 export type CountryFr = Pick<
   Country,
-  "name" | "accounts" | "fundGuidance" | "examples" | "pitfall" | "statePension"
+  | "name"
+  | "accounts"
+  | "fundGuidance"
+  | "examples"
+  | "pitfall"
+  | "bondExamples"
+  | "bondNote"
+  | "statePension"
 > & { inCountry: string };
 
 export const countriesFr: Record<string, CountryFr> = {
@@ -33,6 +40,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "Les fonds communs vendus par les banques prélèvent couramment 2 % par an ou plus, et c'est ce qu'on vous proposera si vous entrez en succursale. Un compte d'épargne à intérêt élevé n'est pas non plus un placement : sur trente ans, il perd contre l'inflation.",
+    bondExamples: [
+      { name: "Vanguard Canadian Aggregate Bond Index ETF", ticker: "VAB", note: "Un large éventail d'obligations d'État et d'entreprises canadiennes." },
+      { name: "BMO Aggregate Bond Index ETF", ticker: "ZAG", note: "La même idée chez un autre fournisseur." },
+      { name: "iShares Core Canadian Universe Bond Index ETF", ticker: "XBB", note: "Convient aussi. Ces trois-là sont presque identiques." },
+    ],
+    bondNote:
+      "Si vous détenez un fonds tout-en-un comme VGRO ou VBAL, les obligations sont déjà dedans — n'en achetez pas en plus. Prenez des obligations en dollars canadiens, ou des obligations étrangères couvertes contre le risque de change : non couvert, un fonds obligataire étranger est surtout un pari sur les devises, soit l'inverse de la raison pour laquelle on détient des obligations.",
     statePension: { name: "RPC + SV", lookup: "canada.ca — Mon dossier Service Canada donne votre estimation réelle du RPC" },
   },
 
@@ -55,6 +69,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "Un menu 401(k) cache souvent un seul fonds indiciel bon marché parmi des fonds gérés coûteux : cherchez le ratio de frais le plus bas, avec « index » ou « S&P 500 » dans le nom. Méfiez-vous aussi de l'assurance vie entière vendue comme un placement ; c'en est rarement un.",
+    bondExamples: [
+      { name: "Vanguard Total Bond Market ETF", ticker: "BND", note: "Pratiquement tout le marché obligataire américain dans un fonds." },
+      { name: "iShares Core U.S. Aggregate Bond ETF", ticker: "AGG", note: "La même exposition chez un autre fournisseur." },
+      { name: "Fidelity U.S. Bond Index Fund", ticker: "FXNAX", note: "La version fonds commun, si cela convient mieux à votre compte." },
+    ],
+    bondNote:
+      "Un fonds à date cible détient déjà des obligations pour vous — n'en rajoutez pas. Achetez des obligations dans votre propre devise, ou couvertes : non couvert, un fonds obligataire étranger est surtout un pari sur les devises.",
     statePension: { name: "Social Security", lookup: "ssa.gov — votre relevé indique votre prestation prévue" },
   },
 
@@ -76,6 +97,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "La plateforme facture des frais en plus de ceux du fonds : vérifiez les deux. Évitez les contrats « with-profits » et tout conseiller qui propose de gérer votre ISA contre un pourcentage — l'enveloppe fiscale est gratuite et le choix du fonds prend dix minutes.",
+    bondExamples: [
+      { name: "Vanguard Global Aggregate Bond UCITS ETF (couvert GBP)", ticker: "VAGP", note: "Obligations d'État et d'entreprises du monde entier, couvertes en livres." },
+      { name: "Vanguard Global Bond Index Fund (couvert GBP)", note: "La version fonds de la même chose." },
+      { name: "iShares Core UK Gilts UCITS ETF", ticker: "IGLT", note: "Uniquement des obligations d'État britanniques — plus simple, sans risque de change." },
+    ],
+    bondNote:
+      "Un fonds LifeStrategy contient déjà des obligations — ne doublez pas. Prenez la version couverte en GBP de tout fonds obligataire mondial : sans couverture, vous pariez surtout sur les devises.",
     statePension: { name: "State Pension", lookup: "gov.uk/check-state-pension" },
   },
 
@@ -97,6 +125,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "Dans un PEA, les trackers monde sont forcément synthétiques : le fonds détient un panier d'actions européennes et échange sa performance contre celle de l'indice mondial, car un PEA ne peut pas détenir directement des actions hors Europe. C'est normal, ce n'est pas un signal d'alarme. Le vrai piège, ce sont les contrats d'assurance-vie qui empilent frais de gestion et unités de compte à 2 % par an.",
+    bondExamples: [
+      { name: "Fonds euros (dans une assurance-vie)", note: "Le placement sûr classique en France : capital garanti par l'assureur. Pour la plupart des gens, c'est la partie obligataire, et aucun ETF n'est nécessaire." },
+      { name: "Amundi Euro Government Bond UCITS ETF", note: "Obligations d'État de la zone euro, pour un compte-titres ou certains contrats PER." },
+      { name: "iShares Core Global Aggregate Bond UCITS ETF (couvert EUR)", ticker: "AGGH", note: "Obligations mondiales couvertes en euros." },
+    ],
+    bondNote:
+      "Les obligations n'ont pas leur place dans un PEA : c'est une enveloppe actions. En France, la partie stable se loge plutôt dans le fonds euros d'une assurance-vie, qui remplit le même rôle. Si vous achetez un ETF obligataire, prenez la version couverte en euros : sans couverture, c'est surtout un pari sur les devises.",
     statePension: { name: "Retraite de base + complémentaire", lookup: "info-retraite.fr — votre estimation consolidée" },
   },
 
@@ -117,6 +152,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "Un Sparplan bancaire sur un fonds géré activement peut prélever un Ausgabeaufschlag allant jusqu'à 5 % avant même que vous ayez gagné quoi que ce soit, plus des frais annuels. Un Sparplan chez un courtier sur un ETF large ne coûte souvent rien par opération.",
+    bondExamples: [
+      { name: "iShares Core Global Aggregate Bond UCITS ETF (couvert EUR)", ticker: "AGGH", note: "Obligations d'État et d'entreprises mondiales, couvertes en euros." },
+      { name: "Xtrackers Eurozone Government Bond UCITS ETF", note: "Uniquement des obligations d'État de la zone euro." },
+      { name: "Tagesgeld ou Festgeld", note: "Sur un horizon court, un simple compte de dépôt remplit le même rôle sans variations de prix." },
+    ],
+    bondNote:
+      "Prenez toujours la part couverte en EUR d'un fonds obligataire mondial : sans couverture, vous pariez surtout sur le dollar. Pour de l'argent nécessaire d'ici quelques années, le Tagesgeld est souvent préférable à un fonds obligataire.",
     statePension: { name: "Gesetzliche Rente", lookup: "deutsche-rentenversicherung.de — votre Renteninformation" },
   },
 
@@ -137,6 +179,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "Les fonds de super grand public peuvent facturer plusieurs fois le coût d'une option indicielle proposée dans le même fonds. Connectez-vous, trouvez l'option internationale indicielle et comparez les frais — c'est souvent la chose la plus rentable que vous ferez d'un après-midi.",
+    bondExamples: [
+      { name: "Vanguard Australian Fixed Interest Index ETF", ticker: "VAF", note: "Obligations australiennes d'État et d'entreprises dans un seul fonds." },
+      { name: "Vanguard Australian Government Bond Index ETF", ticker: "VGB", note: "Uniquement des obligations d'État — la plus stable des deux." },
+      { name: "Vanguard Global Aggregate Bond Index (couvert)", ticker: "VBND", note: "Obligations mondiales couvertes en dollars australiens." },
+    ],
+    bondNote:
+      "VDHG contient déjà des obligations ; DHHF n'en contient volontairement aucune. Vérifiez lequel vous détenez avant d'en ajouter. Votre fonds de super en détient aussi pour vous dans la plupart des options. Prenez toujours la version couverte d'un fonds obligataire mondial.",
     statePension: { name: "Age Pension", lookup: "servicesaustralia.gov.au" },
   },
 
@@ -156,6 +205,13 @@ export const countriesFr: Record<string, CountryFr> = {
     ],
     pitfall:
       "Si vous n'êtes pas contribuable américain, méfiez-vous des ETF domiciliés aux États-Unis : ils peuvent exposer votre succession à l'impôt américain au-delà d'un seuil bas, et beaucoup de courtiers européens ne peuvent pas vous les vendre. Cherchez un fonds domicilié en Irlande ou au Luxembourg (généralement marqué UCITS).",
+    bondExamples: [
+      { name: "Un fonds d'obligations d'État dans votre devise", note: "Cherchez aggregate, government ou total bond dans le nom." },
+      { name: "Un fonds obligataire mondial couvert dans votre devise", note: "La couverture de change compte bien plus pour les obligations que pour les actions." },
+      { name: "Un simple compte d'épargne ou de dépôt", note: "Pour de l'argent nécessaire d'ici quelques années, il remplit le même rôle sans variations de prix." },
+    ],
+    bondNote:
+      "Si vous détenez un fonds tout-en-un ou à date cible, les obligations sont déjà dedans — n'en achetez pas séparément. Et prenez toujours la version couverte dans la devise que vous dépensez : sans couverture, un fonds obligataire étranger est surtout un pari sur les devises.",
     statePension: { name: "Pension d'État", lookup: "L'organisme de retraite de votre pays" },
   },
 };

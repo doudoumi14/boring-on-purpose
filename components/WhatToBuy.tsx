@@ -44,6 +44,32 @@ export function WhatToBuy({
         <p className="mt-1 text-sm text-secondary">{country.pitfall}</p>
       </div>
 
+      <h4 className="mt-8 font-semibold">{t.buy.bondsTitle}</h4>
+      <p className="mt-1 text-sm text-secondary">{t.buy.bondsLede}</p>
+
+      <ul className="mt-4 flex flex-col gap-3">
+        {country.bondExamples.map((f) => (
+          <li
+            key={f.name}
+            className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4"
+          >
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <span className="font-semibold">{f.name}</span>
+              {f.ticker && (
+                <code className="rounded bg-[var(--series-bonds)]/15 px-1.5 py-0.5 text-xs font-semibold text-[var(--series-bonds)]">
+                  {f.ticker}
+                </code>
+              )}
+            </div>
+            <p className="mt-1 text-sm text-secondary">{f.note}</p>
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm text-secondary">
+        {country.bondNote}
+      </p>
+
       <h4 className="mt-8 font-semibold">{t.buy.criteriaTitle}</h4>
       <p className="mt-1 text-sm text-secondary">{t.buy.criteriaLede}</p>
       <ol className="mt-4 flex flex-col gap-3">
