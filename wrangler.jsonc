@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "boring-on-purpose",
+  "compatibility_date": "2026-09-11",
+
+  // This is `output: "export"` in next.config.ts — a pure static build in out/.
+  // Declaring assets here also stops wrangler auto-detecting "Next.js" and
+  // running the OpenNext server adapter, which expects a standalone server
+  // build that a static export never produces.
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
