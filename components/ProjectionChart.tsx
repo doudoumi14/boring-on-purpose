@@ -15,12 +15,14 @@ interface Point {
 export function ProjectionChart({
   t,
   series,
+  range,
   target,
   currentAge,
   money,
 }: {
   t: Dict;
   series: Point[];
+  range: { low: number; high: number };
   target: number;
   currentAge: number;
   money: (v: number, opts?: { compact?: boolean }) => string;
@@ -34,7 +36,7 @@ export function ProjectionChart({
   const plotH = H - PAD.top - PAD.bottom;
 
   const lastYear = series.at(-1)?.year ?? 1;
-  const maxValue = Math.max(target, ...series.map((p) => p.balance)) * 1.08;
+  const maxValue = Math.max(target, range.high, ...series.map((p) => p.balance)) * 1.08;
 
   const x = (year: number) => PAD.left + (year / Math.max(1, lastYear)) * plotW;
   const y = (value: number) => PAD.top + plotH - (value / maxValue) * plotH;
@@ -82,7 +84,26 @@ export function ProjectionChart({
           </g>
         ))}
 
-        <path d={area} fill="var(--series-equity)" opacity={0.14} />
+        {/* The band is the honest part: a single line implies a precision that
+            no projection has. */}
+        <path
+          d={`${series
+            .map(
+              (p, i) =>
+                `${i === 0 ? "M" : "L"} ${x(p.year)} ${y(p.balance * (range.high / Math.max(1, series.at(-1)!.balance)))}`,
+            )
+            .join(" ")} ${series
+            .slice()
+            .reverse()
+            .map(
+              (p) =>
+                `L ${x(p.year)} ${y(p.balance * (range.low / Math.max(1, series.at(-1)!.balance)))}`,
+            )
+            .join(" ")} Z`}
+          fill="var(--series-equity)"
+          opacity={0.13}
+        />
+        <path d={area} fill="var(--series-equity)" opacity={0.08} />
         <path d={line} fill="none" stroke="var(--series-equity)" strokeWidth={2} strokeLinejoin="round" />
 
         {/* Target: a reference line on the same scale, labelled directly. */}

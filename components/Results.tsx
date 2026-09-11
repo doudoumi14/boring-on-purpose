@@ -1,6 +1,7 @@
 "use client";
 
 import { AllocationChart } from "@/components/AllocationChart";
+import { CountUp } from "@/components/CountUp";
 import { DisclaimerPanel } from "@/components/Disclaimer";
 import { FeeChart } from "@/components/FeeChart";
 import { ProjectionChart } from "@/components/ProjectionChart";
@@ -49,18 +50,27 @@ export function Results({
         </p>
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-3">
-          <Stat label={t.results.targetLabel} value={money(plan.target)} />
+          <Stat label={t.results.targetLabel} value={plan.target} money={money} />
           <Stat
             label={t.results.projectedLabel}
-            value={money(plan.projectedWithCurrentSaving)}
+            value={plan.projectedWithCurrentSaving}
+            money={money}
             tone={plan.onTrack ? "good" : "warn"}
           />
           <Stat
             label={t.results.addLabel}
-            value={money(plan.requiredMonthly)}
+            value={plan.requiredMonthly}
+            money={money}
             tone={shortfall > 0 ? "warn" : "good"}
           />
         </dl>
+
+        <p className="mt-4 text-sm text-secondary">
+          {t.results.horizonNote(plan.retirementYears, `${(plan.withdrawalRate * 100).toFixed(1)}%`)}
+        </p>
+        <p className="mt-2 text-sm text-secondary">
+          {t.results.rangeNote(money(plan.range.low), money(plan.range.high))}
+        </p>
 
         {shortfall > 0 && (
           <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm">
@@ -89,6 +99,7 @@ export function Results({
         <ProjectionChart
           t={t}
           series={plan.series}
+          range={plan.range}
           target={plan.target}
           currentAge={answers.currentAge}
           money={money}
@@ -124,7 +135,17 @@ export function Results({
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string; tone?: "good" | "warn" }) {
+function Stat({
+  label,
+  value,
+  money,
+  tone,
+}: {
+  label: string;
+  value: number;
+  money: (v: number) => string;
+  tone?: "good" | "warn";
+}) {
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
       <dt className="text-xs tracking-wider text-muted uppercase">{label}</dt>
@@ -133,7 +154,7 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: "go
           tone === "good" ? "text-[var(--good)]" : tone === "warn" ? "text-[var(--loss)]" : ""
         }`}
       >
-        {value}
+        <CountUp value={value} format={money} />
       </dd>
     </div>
   );

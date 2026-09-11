@@ -1,9 +1,10 @@
 "use client";
 
+import { CountUp } from "@/components/CountUp";
 import { AgeField, AmountField } from "@/components/fields";
 import { countries, getCountry } from "@/lib/countries";
 import type { RiskTolerance } from "@/lib/finance";
-import { scoreRisk } from "@/lib/finance";
+import { buildPlan, scoreRisk } from "@/lib/finance";
 import { formatMoney } from "@/lib/format";
 import type { Dict, Lang } from "@/lib/i18n";
 import { useState } from "react";
@@ -57,6 +58,22 @@ export function Wizard({
   }
 
   const canAdvance = step !== 1 || retirementAge > currentAge;
+
+  // Recomputed on every keystroke and drag. The maths is a handful of
+  // closed-form formulas, so this is cheap, and seeing the figure move while
+  // you drag a slider teaches more than any paragraph about compounding.
+  const preview =
+    retirementAge > currentAge
+      ? buildPlan({
+          currentAge,
+          retirementAge,
+          savings,
+          monthlyContribution,
+          desiredMonthlyIncome,
+          statePensionMonthly,
+          risk: "balanced",
+        })
+      : null;
 
   return (
     <div className="mx-auto w-full max-w-xl">
@@ -221,6 +238,16 @@ export function Wizard({
               </div>
             </fieldset>
           ))}
+        </div>
+      )}
+
+      {preview && step >= 2 && step < 4 && (
+        <div className="mt-8 rounded-2xl border border-[var(--series-equity)]/40 bg-[var(--accent-soft)] p-5">
+          <p className="text-xs tracking-wider text-muted uppercase">{t.wizard.livePreview}</p>
+          <p className="mt-1 text-3xl font-bold text-[var(--series-equity)]">
+            <CountUp value={preview.projectedWithCurrentSaving} format={money} durationMs={450} />
+          </p>
+          <p className="mt-1 text-sm text-secondary">{t.wizard.livePreviewHint}</p>
         </div>
       )}
 

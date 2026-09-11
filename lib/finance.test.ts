@@ -11,6 +11,7 @@ import {
   requiredMonthlyContribution,
   scoreRisk,
   targetCapital,
+  withdrawalRateFor,
 } from "./finance";
 
 describe("monthlyRate", () => {
@@ -262,5 +263,85 @@ describe("buildPlan", () => {
     const without = buildPlan(base);
     const with_ = buildPlan({ ...base, statePensionMonthly: 1500 });
     expect(with_.target).toBeLessThan(without.target);
+  });
+});
+
+describe("withdrawalRateFor", () => {
+  it("matches the familiar 4% at the 30-year horizon it was measured on", () => {
+    expect(withdrawalRateFor(30)).toBeCloseTo(0.04, 10);
+  });
+
+  it("allows more when the money has less time to cover", () => {
+    expect(withdrawalRateFor(20)).toBeGreaterThan(withdrawalRateFor(30));
+  });
+
+  it("requires less when it has to stretch further", () => {
+    expect(withdrawalRateFor(45)).toBeLessThan(withdrawalRateFor(30));
+    expect(withdrawalRateFor(50)).toBeLessThan(withdrawalRateFor(45));
+  });
+
+  it("never rises as the horizon lengthens", () => {
+    let previous = Infinity;
+    for (let y = 10; y <= 60; y++) {
+      const rate = withdrawalRateFor(y);
+      expect(rate).toBeLessThanOrEqual(previous + 1e-12);
+      previous = rate;
+    }
+  });
+
+  it("stays inside a defensible band at every horizon", () => {
+    for (let y = 10; y <= 60; y++) {
+      expect(withdrawalRateFor(y)).toBeGreaterThan(0.03);
+      expect(withdrawalRateFor(y)).toBeLessThan(0.05);
+    }
+  });
+});
+
+describe("retirement length drives the target", () => {
+  const base = {
+    currentAge: 40,
+    savings: 50_000,
+    monthlyContribution: 500,
+    desiredMonthlyIncome: 3000,
+    risk: "balanced" as const,
+  };
+
+  it("asks an early retiree for a bigger pot for the same income", () => {
+    const early = buildPlan({ ...base, retirementAge: 55 });
+    const later = buildPlan({ ...base, currentAge: 55, retirementAge: 70 });
+    expect(early.retirementYears).toBeGreaterThan(later.retirementYears);
+    expect(early.withdrawalRate).toBeLessThan(later.withdrawalRate);
+    expect(early.target).toBeGreaterThan(later.target);
+  });
+
+  it("reports the rate it actually used", () => {
+    const plan = buildPlan({ ...base, retirementAge: 65 });
+    expect(plan.retirementYears).toBe(30);
+    expect(plan.withdrawalRate).toBeCloseTo(0.04, 10);
+    expect(plan.target).toBeCloseTo((3000 * 12) / 0.04, 6);
+  });
+});
+
+describe("the projected range", () => {
+  const args = {
+    currentAge: 35,
+    retirementAge: 65,
+    savings: 20_000,
+    monthlyContribution: 400,
+    desiredMonthlyIncome: 2500,
+    risk: "balanced" as const,
+  };
+
+  it("brackets the expected figure rather than replacing it", () => {
+    const plan = buildPlan(args);
+    expect(plan.range.low).toBeLessThan(plan.projectedWithCurrentSaving);
+    expect(plan.range.high).toBeGreaterThan(plan.projectedWithCurrentSaving);
+  });
+
+  it("widens with time, because uncertainty compounds too", () => {
+    const short = buildPlan({ ...args, currentAge: 60 });
+    const long = buildPlan({ ...args, currentAge: 25 });
+    const spread = (p: typeof short) => p.range.high / Math.max(1, p.range.low);
+    expect(spread(long)).toBeGreaterThan(spread(short));
   });
 });

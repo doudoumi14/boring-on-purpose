@@ -38,26 +38,26 @@ async function fillWizard(
 ) {
   await page.getByRole("button", { name: /build my plan/i }).click();
   await page.getByLabel("Country").selectOption(country);
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
 
   await setAge(page, "Current age", age);
   await setAge(page, "Retirement age", retire);
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
 
-  await setAmount(page, "already saved", savings);
-  await setAmount(page, "put aside each month", monthly);
-  await page.getByRole("button", { name: "Continue" }).click();
+  await setAmount(page, "saved or invested so far", savings);
+  await setAmount(page, "put away each month", monthly);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
 
   await setAmount(page, "live on each month", income);
   await setAmount(page, "Expected", pension);
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
 }
 
 async function answerRisk(page: Page, which: "low" | "mid" | "high") {
   const sets = {
-    low: [/could not watch that happen/i, /drop sharply/i, /makes me nervous/i],
-    mid: [/leave it alone and wait/i, /both about the same/i, /i would manage/i],
-    high: [/put more in while prices are low/i, /running out of money/i, /i did not sell/i],
+    low: [/couldn't watch that happen/i, /watching my savings fall/i, /makes me nervous/i],
+    mid: [/leave it alone and wait/i, /both about the same/i, /i'd hold on/i],
+    high: [/buy more while it's cheap/i, /running out of money/i, /i didn't sell/i],
   } as const;
   for (const label of sets[which]) await page.getByRole("button", { name: label }).click();
   await expect(page.getByText("Your plan").first()).toBeVisible();
@@ -94,8 +94,8 @@ test.describe("Boring on Purpose", () => {
   test("a quick-pick chip sets the amount without any typing", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /build my plan/i }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
 
     await page.getByRole("button", { name: "$50,000", exact: true }).click();
     await expect(page.getByText("$50,000").first()).toBeVisible();
@@ -104,7 +104,7 @@ test.describe("Boring on Purpose", () => {
   test("a slider reads out its value as money while it moves", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /build my plan/i }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
     await setAge(page, "Current age", 55);
     await expect(page.getByText("55 years old")).toBeVisible();
   });
@@ -122,10 +122,10 @@ test.describe("Boring on Purpose", () => {
     const far = equityPct(await page.getByText(/% in one fund/).innerText());
 
     await page.getByRole("button", { name: "Start again" }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
     await setAge(page, "Current age", 60);
     await setAge(page, "Retirement age", 65);
-    for (let i = 0; i < 3; i++) await page.getByRole("button", { name: "Continue" }).click();
+    for (let i = 0; i < 3; i++) await page.getByRole("button", { name: "Next", exact: true }).click();
     await answerRisk(page, "mid");
     const near = equityPct(await page.getByText(/% in one fund/).innerText());
 
@@ -139,7 +139,7 @@ test.describe("Boring on Purpose", () => {
     const cautious = equityPct(await page.getByText(/% in one fund/).innerText());
 
     await page.getByRole("button", { name: "Start again" }).click();
-    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Continue" }).click();
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Next", exact: true }).click();
     await answerRisk(page, "high");
     const bold = equityPct(await page.getByText(/% in one fund/).innerText());
 
@@ -165,11 +165,11 @@ test.describe("Boring on Purpose", () => {
     await answerRisk(page, "mid");
     await expect(page.getByText("VEQT")).toBeVisible();
     await expect(page.getByText("TFSA")).toBeVisible();
-    await expect(page.getByText(/not recommendations/i)).toBeVisible();
+    await expect(page.getByText(/rather than recommendations/i)).toBeVisible();
 
     await page.getByRole("button", { name: "Start again" }).click();
     await page.getByLabel("Country").selectOption("FR");
-    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Continue" }).click();
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Next", exact: true }).click();
     await answerRisk(page, "mid");
     // A French PEA cannot hold the Canadian or US products at all.
     await expect(page.getByText("CW8")).toBeVisible();
@@ -183,8 +183,8 @@ test.describe("Boring on Purpose", () => {
     await answerRisk(page, "mid");
 
     await expect(page.getByText(/the steady part/i).first()).toBeVisible();
-    await expect(page.getByText("VAB")).toBeVisible();
-    await expect(page.getByText("ZAG")).toBeVisible();
+    await expect(page.getByText("VAB").first()).toBeVisible();
+    await expect(page.getByText("ZAG").first()).toBeVisible();
     // The two things people get wrong: doubling up, and going unhedged.
     await expect(page.getByText(/already inside it/i)).toBeVisible();
     await expect(page.getByText(/bet on exchange rates/i)).toBeVisible();
@@ -210,20 +210,20 @@ test.describe("Boring on Purpose", () => {
   test("will not let retirement age precede current age", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /build my plan/i }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
     await setAge(page, "Current age", 60);
     await setAge(page, "Retirement age", 50);
-    await expect(page.getByText(/needs to be a later age/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
+    await expect(page.getByText(/needs to be older than you are now/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Next", exact: true })).toBeDisabled();
   });
 
   test("a cleared exact-amount field accepts typing normally", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /build my plan/i }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
 
-    const field = page.locator("div").filter({ hasText: "already saved" }).last();
+    const field = page.locator("div").filter({ hasText: "saved or invested so far" }).last();
     await field.getByRole("button", { name: /type an exact amount/i }).click();
     const input = page.getByLabel("or type an exact amount").last();
 
@@ -254,7 +254,7 @@ test.describe("Boring on Purpose", () => {
     await page.getByRole("button", { name: "FR" }).click();
     await page.getByRole("button", { name: /Créer mon plan/i }).click();
     await page.getByLabel("Country").selectOption("FR");
-    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Continuer" }).click();
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Suivant", exact: true }).click();
     for (const l of [/n'y toucherais pas/i, /autant l'un que l'autre/i, /je tiendrais bon/i]) {
       await page.getByRole("button", { name: l }).click();
     }
@@ -269,7 +269,7 @@ test.describe("Boring on Purpose", () => {
 
   test("says it is a learning tool before a single question is answered", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText(/a learning tool — not financial advice/i)).toBeVisible();
+    await expect(page.getByText(/a learning tool, not financial advice/i)).toBeVisible();
   });
 
   test("repeats the warning above the results, where the numbers appear", async ({ page }) => {
@@ -277,10 +277,10 @@ test.describe("Boring on Purpose", () => {
     await fillWizard(page);
     await answerRisk(page, "mid");
 
-    const warning = page.getByText(/this is a learning tool, not financial advice/i);
+    const warning = page.getByText(/this is a learning tool and not financial advice/i);
     await expect(warning).toBeVisible();
-    await expect(page.getByText(/not a recommendation about your own money/i)).toBeVisible();
-    await expect(page.getByText(/flat fee rather than a yearly percentage/i)).toBeVisible();
+    await expect(page.getByText(/not to tell you what to do with your money/i)).toBeVisible();
+    await expect(page.getByText(/flat fee instead of taking a slice/i)).toBeVisible();
 
     // It has to come before the target figure, not after it.
     const warningY = (await warning.boundingBox())!.y;
@@ -300,7 +300,7 @@ test.describe("Boring on Purpose", () => {
   test("warns in French too", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "FR" }).click();
-    await expect(page.getByText(/outil pédagogique — pas un conseil financier/i)).toBeVisible();
+    await expect(page.getByText(/outil pédagogique, pas un conseil financier/i)).toBeVisible();
   });
 
   test("keeps the full notice in the footer", async ({ page }) => {
