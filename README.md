@@ -15,12 +15,13 @@ You answer five things — country, timeline, savings, target retirement income,
 - **A projection.** Year-by-year balance against that target.
 - **The cost of fees.** The same plan at 0.05%, 1% and 1.9% a year. This is usually the most persuasive screen in the tool — all three bars are the same length, because the returns are identical. Only the split between you and the fee changes.
 - **An order of operations.** Which tax-sheltered account to fill first, specific to your country (TFSA/RRSP, 401(k)/IRA, ISA/SIPP, PEA, Depot, Super).
+- **What to actually buy.** Example funds available where you live, the local trap to avoid, and the five questions that identify a good fund anywhere.
 
 ## Design decisions worth knowing
 
 **Everything is in real terms.** Telling a 35-year-old they need $2.4M is true and useless — nobody has intuition for what $2.4M buys in 2056. Every figure is inflation-adjusted into today's money, which means every return assumption is a real return and inflation is never added back.
 
-**No tickers, ever.** The tool names *categories* of fund, not products. Recommending a specific product is the behaviour this site argues against, and it would age badly.
+**Named examples, plus the test for finding others.** "Buy a broad index fund" is useless to someone with no financial background — they walk into their bank and get sold a 2% product, which is the outcome this site exists to prevent. So each country gets real examples it can buy, and the local trap that catches people. Naming a broad index fund is not stock picking: within a category these funds are near-interchangeable, which is the point. The examples ship beside five criteria that identify an equivalent, because fees and fund names change and the criteria do not.
 
 **Nationality is asked for exactly two reasons**: which tax wrapper to fill first (the highest-value decision most people can make), and which flavour of fund is sensibly buyable where they live.
 
@@ -47,7 +48,7 @@ These are planning assumptions, not forecasts. Real markets do not deliver an ev
 npm install
 npm run dev        # http://localhost:3000
 npm test           # 30 unit tests over the finance maths
-npm run test:e2e   # 10 browser tests over the whole flow
+npm run test:e2e   # 12 browser tests over the whole flow
 npm run build      # static export to out/
 ```
 
@@ -64,3 +65,13 @@ This is an educational tool. It is not a licensed financial advisor, and it know
 ## Licence
 
 MIT.
+
+## Deploying
+
+Static export on Cloudflare Workers:
+
+```bash
+npm run deploy   # next build && wrangler deploy
+```
+
+`wrangler.jsonc` declares `out/` as the asset directory, which also prevents wrangler auto-detecting Next.js and invoking the OpenNext server adapter — that expects a standalone build a static export never produces.
