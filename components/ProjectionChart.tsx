@@ -1,5 +1,6 @@
 "use client";
 
+import type { Dict } from "@/lib/i18n";
 import { useState } from "react";
 
 interface Point {
@@ -12,11 +13,13 @@ interface Point {
  * reference line on the same scale, never a second y-axis.
  */
 export function ProjectionChart({
+  t,
   series,
   target,
   currentAge,
   money,
 }: {
+  t: Dict;
   series: Point[];
   target: number;
   currentAge: number;
@@ -47,8 +50,8 @@ export function ProjectionChart({
   return (
     <figure className="m-0">
       <figcaption className="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <span className="text-sm font-semibold">Your pot, year by year</span>
-        <span className="text-xs text-muted">In today&rsquo;s money, after inflation</span>
+        <span className="text-sm font-semibold">{t.charts.projectionTitle}</span>
+        <span className="text-xs text-muted">{t.charts.projectionSub}</span>
       </figcaption>
 
       <svg
@@ -98,7 +101,7 @@ export function ProjectionChart({
           textAnchor="end"
           className="fill-[var(--series-bonds)] text-[11px] font-semibold"
         >
-          target {money(target, { compact: true })}
+          {t.charts.target} {money(target, { compact: true })}
         </text>
 
         {ticks.map((t) => (
@@ -150,8 +153,8 @@ export function ProjectionChart({
 
       <p className="mt-1 h-5 text-sm text-secondary" aria-live="polite">
         {active
-          ? `Age ${currentAge + active.year}: ${money(active.balance)}`
-          : "Hover the chart to read any year."}
+          ? t.charts.atAge(currentAge + active.year, money(active.balance))
+          : t.charts.hoverHint}
       </p>
     </figure>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import type { FeeScenario } from "@/lib/finance";
+import type { Dict } from "@/lib/i18n";
 
 /**
  * Same plan, three fee levels. Each bar is split into what you keep and what
@@ -9,9 +10,11 @@ import type { FeeScenario } from "@/lib/finance";
  * has to be decoded on its own.
  */
 export function FeeChart({
+  t,
   scenarios,
   money,
 }: {
+  t: Dict;
   scenarios: FeeScenario[];
   money: (v: number, opts?: { compact?: boolean }) => string;
 }) {
@@ -20,25 +23,24 @@ export function FeeChart({
   return (
     <figure className="m-0">
       <figcaption className="mb-1 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <span className="text-sm font-semibold">What fees cost you</span>
-        <span className="text-xs text-muted">Identical investments, identical returns</span>
+        <span className="text-sm font-semibold">{t.charts.feesTitle}</span>
+        <span className="text-xs text-muted">{t.charts.feesSub}</span>
       </figcaption>
       <p className="mb-4 text-sm text-secondary">
-        The only difference between these three is the annual charge. Nobody is picking better
-        investments — the gap is pure cost.
+        {t.charts.feesLede}
       </p>
 
       <ul className="flex flex-col gap-4">
-        {scenarios.map((s) => {
+        {scenarios.map((s, idx) => {
           const keepPct = (s.balance / max) * 100;
           const lostPct = (s.lostToFees / max) * 100;
           return (
             <li key={s.label}>
               <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3">
                 <span className="text-sm font-medium">
-                  {s.label}{" "}
+                  {t.charts.feeNames[idx]}{" "}
                   <span className="text-muted tabular-nums">
-                    ({(s.fee * 100).toFixed(2)}% a year)
+                    {t.charts.perYear(`${(s.fee * 100).toFixed(2)}%`)}
                   </span>
                 </span>
                 <span className="text-sm font-semibold tabular-nums">{money(s.balance)}</span>
@@ -62,7 +64,7 @@ export function FeeChart({
 
               {s.lostToFees > 0 && (
                 <p className="mt-1 text-sm text-[var(--loss)]">
-                  {money(s.lostToFees)} of your money goes to fees
+                  {t.charts.lostToFees(money(s.lostToFees))}
                 </p>
               )}
             </li>
@@ -73,11 +75,11 @@ export function FeeChart({
       <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm">
         <li className="flex items-center gap-2">
           <span className="size-2.5 rounded-sm bg-[var(--series-equity)]" aria-hidden />
-          <span className="text-secondary">You keep</span>
+          <span className="text-secondary">{t.charts.youKeep}</span>
         </li>
         <li className="flex items-center gap-2">
           <span className="size-2.5 rounded-sm bg-[var(--loss)]" aria-hidden />
-          <span className="text-secondary">Taken in fees</span>
+          <span className="text-secondary">{t.charts.takenInFees}</span>
         </li>
       </ul>
     </figure>

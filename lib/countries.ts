@@ -18,6 +18,9 @@
  * not.
  */
 
+import { countriesFr } from "./countries.fr";
+import type { Lang } from "./i18n";
+
 export interface Country {
   code: string;
   name: string;
@@ -203,6 +206,14 @@ export const countries: Country[] = [
   },
 ];
 
-export function getCountry(code: string): Country {
-  return countries.find((c) => c.code === code) ?? countries[countries.length - 1];
+export function getCountry(code: string, lang: Lang = "en"): Country & { inCountry: string } {
+  const base = countries.find((c) => c.code === code) ?? countries[countries.length - 1];
+  if (lang === "en") return { ...base, inCountry: `in ${base.name}` };
+
+  // Falls back to English per-country rather than failing: a missing
+  // translation should degrade to readable text, not a blank panel. The
+  // completeness test keeps that path from being needed.
+  const fr = countriesFr[base.code];
+  if (!fr) return { ...base, inCountry: `in ${base.name}` };
+  return { ...base, ...fr };
 }

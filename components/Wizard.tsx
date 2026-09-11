@@ -1,8 +1,11 @@
 "use client";
 
-import { countries } from "@/lib/countries";
+import { AgeField, AmountField } from "@/components/fields";
+import { countries, getCountry } from "@/lib/countries";
 import type { RiskTolerance } from "@/lib/finance";
 import { scoreRisk } from "@/lib/finance";
+import { formatMoney } from "@/lib/format";
+import type { Dict, Lang } from "@/lib/i18n";
 import { useState } from "react";
 
 export interface Answers {
@@ -16,36 +19,15 @@ export interface Answers {
   risk: RiskTolerance;
 }
 
-const RISK_QUESTIONS = [
-  {
-    prompt: "Your savings drop 30% in a year. What do you actually do?",
-    options: [
-      { label: "Sell — I could not watch that happen", score: 1 },
-      { label: "Sit tight and wait it out", score: 2 },
-      { label: "Buy more while it is cheap", score: 3 },
-    ],
-  },
-  {
-    prompt: "Which would bother you more?",
-    options: [
-      { label: "Watching my pot fall sharply for a year or two", score: 1 },
-      { label: "They bother me about equally", score: 2 },
-      { label: "Running out of money in my eighties", score: 3 },
-    ],
-  },
-  {
-    prompt: "Have you invested through a market crash before?",
-    options: [
-      { label: "No, and the idea makes me nervous", score: 1 },
-      { label: "No, but I think I would cope", score: 2 },
-      { label: "Yes, and I stayed invested", score: 3 },
-    ],
-  },
-];
-
-const STEPS = ["Where you are", "Your timeline", "Your money", "Your retirement", "Your nerves"];
-
-export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
+export function Wizard({
+  t,
+  lang,
+  onComplete,
+}: {
+  t: Dict;
+  lang: Lang;
+  onComplete: (a: Answers) => void;
+}) {
   const [step, setStep] = useState(0);
   const [country, setCountry] = useState("CA");
   const [currentAge, setCurrentAge] = useState(40);
@@ -56,7 +38,10 @@ export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
   const [statePensionMonthly, setStatePensionMonthly] = useState(0);
   const [riskAnswers, setRiskAnswers] = useState<number[]>([]);
 
-  const selected = countries.find((c) => c.code === country)!;
+  const selected = getCountry(country, lang);
+  const steps = t.wizard.steps;
+  const money = (v: number) =>
+    formatMoney(v, { locale: selected.locale, currency: selected.currency });
 
   function finish(answers: number[]) {
     onComplete({
@@ -71,16 +56,15 @@ export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
     });
   }
 
-  const canAdvance =
-    step !== 1 || retirementAge > currentAge;
+  const canAdvance = step !== 1 || retirementAge > currentAge;
 
   return (
     <div className="mx-auto w-full max-w-xl">
-      <ol className="mb-6 flex gap-1.5" aria-label="Progress">
-        {STEPS.map((label, i) => (
+      <ol className="mb-5 flex gap-1.5" aria-label="Progress">
+        {steps.map((label, i) => (
           <li key={label} className="flex-1">
             <div
-              className={`h-1 rounded-full transition-colors ${i <= step ? "bg-[var(--series-equity)]" : "bg-[var(--gridline)]"}`}
+              className={`h-1.5 rounded-full transition-colors ${i <= step ? "bg-[var(--series-equity)]" : "bg-[var(--gridline)]"}`}
             />
             <span className="sr-only">
               {label}
@@ -90,24 +74,21 @@ export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
         ))}
       </ol>
 
-      <p className="mb-1 text-xs tracking-widest text-muted uppercase">
-        Step {step + 1} of {STEPS.length}
+      <p className="mb-5 text-xs tracking-widest text-muted uppercase">
+        {t.wizard.stepOf(step + 1, steps.length)}
       </p>
 
       {step === 0 && (
-        <Field
-          label="Where do you live?"
-          help="This decides which tax-sheltered account you should fill first — the highest-value choice on this page."
-        >
+        <Field label={t.wizard.country} help={t.wizard.countryHelp}>
           <select
             aria-label="Country"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            className="input"
+            className="input text-lg"
           >
             {countries.map((c) => (
               <option key={c.code} value={c.code}>
-                {c.name}
+                {getCountry(c.code, lang).name}
               </option>
             ))}
           </select>
@@ -115,20 +96,28 @@ export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
       )}
 
       {step === 1 && (
-        <div className="flex flex-col gap-5">
-          <Field label="How old are you?">
-            <NumberInput value={currentAge} onChange={setCurrentAge} min={16} max={100} label="Current age" />
+        <div className="flex flex-col gap-8">
+          <Field label={t.wizard.age}>
+            <AgeField
+              t={t}
+              value={currentAge}
+              onChange={setCurrentAge}
+              min={16}
+              max={100}
+              label="Current age"
+            />
           </Field>
           <Field
-            label="When would you like to stop working?"
+            label={t.wizard.retireAge}
             help={
               retirementAge <= currentAge
-                ? "Your retirement age needs to be later than your current age."
-                : `That gives you ${retirementAge - currentAge} years of compounding.`
+                ? t.wizard.retireInvalid
+                : t.wizard.retireYears(retirementAge - currentAge)
             }
             invalid={retirementAge <= currentAge}
           >
-            <NumberInput
+            <AgeField
+              t={t}
               value={retirementAge}
               onChange={setRetirementAge}
               min={40}
@@ -140,49 +129,60 @@ export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
       )}
 
       {step === 2 && (
-        <div className="flex flex-col gap-5">
-          <Field label={`How much have you saved or invested so far? (${selected.currency})`}>
-            <NumberInput value={savings} onChange={setSavings} min={0} step={1000} label="Current savings" />
+        <div className="flex flex-col gap-8">
+          <Field label={t.wizard.savings(selected.currency)} help={t.wizard.savingsHelp}>
+            <AmountField
+              t={t}
+              value={savings}
+              onChange={setSavings}
+              max={500000}
+              step={1000}
+              presets={[0, 10000, 50000, 150000]}
+              money={money}
+            />
           </Field>
-          <Field
-            label={`How much can you add each month? (${selected.currency})`}
-            help="An honest number beats an aspirational one. You can always raise it later."
-          >
-            <NumberInput
+          <Field label={t.wizard.monthly(selected.currency)} help={t.wizard.monthlyHelp}>
+            <AmountField
+              t={t}
               value={monthlyContribution}
               onChange={setMonthlyContribution}
-              min={0}
-              step={50}
-              label="Monthly contribution"
+              max={5000}
+              step={25}
+              presets={[100, 250, 500, 1000]}
+              money={money}
+              suffix={t.wizard.perMonth}
             />
           </Field>
         </div>
       )}
 
       {step === 3 && (
-        <div className="flex flex-col gap-5">
-          <Field
-            label={`How much do you want to live on each month once retired? (${selected.currency})`}
-            help="In today's money. Think of what your current life costs, minus the mortgage if it will be paid off."
-          >
-            <NumberInput
+        <div className="flex flex-col gap-8">
+          <Field label={t.wizard.income(selected.currency)} help={t.wizard.incomeHelp}>
+            <AmountField
+              t={t}
               value={desiredMonthlyIncome}
               onChange={setDesiredMonthlyIncome}
-              min={0}
-              step={250}
-              label="Desired monthly income"
+              max={15000}
+              step={100}
+              presets={[1500, 2500, 4000, 6000]}
+              money={money}
+              suffix={t.wizard.perMonth}
             />
           </Field>
           <Field
-            label={`Expected ${selected.statePension.name}, if you know it (${selected.currency}/month)`}
-            help={`Optional. Leave at 0 and anything you receive is a bonus. To check: ${selected.statePension.lookup}.`}
+            label={t.wizard.pension(selected.statePension.name, selected.currency)}
+            help={t.wizard.pensionHelp(selected.statePension.lookup)}
           >
-            <NumberInput
+            <AmountField
+              t={t}
               value={statePensionMonthly}
               onChange={setStatePensionMonthly}
-              min={0}
-              step={100}
-              label="State pension"
+              max={5000}
+              step={50}
+              presets={[0, 800, 1500, 2500]}
+              money={money}
+              suffix={t.wizard.perMonth}
             />
           </Field>
         </div>
@@ -190,53 +190,87 @@ export function Wizard({ onComplete }: { onComplete: (a: Answers) => void }) {
 
       {step === 4 && (
         <div className="flex flex-col gap-6">
-          {RISK_QUESTIONS.map((q, qi) => (
+          <p className="text-sm text-secondary">{t.wizard.riskIntro}</p>
+          {t.wizard.risk.map((q, qi) => (
             <fieldset key={q.prompt} className="border-0 p-0">
               <legend className="mb-2 font-medium">{q.prompt}</legend>
               <div className="flex flex-col gap-2">
-                {q.options.map((o) => (
-                  <button
-                    key={o.label}
-                    type="button"
-                    onClick={() => {
-                      const next = [...riskAnswers];
-                      next[qi] = o.score;
-                      setRiskAnswers(next);
-                      if (next.filter(Boolean).length === RISK_QUESTIONS.length) finish(next);
-                    }}
-                    aria-pressed={riskAnswers[qi] === o.score}
-                    className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
-                      riskAnswers[qi] === o.score
-                        ? "border-[var(--series-equity)] bg-[var(--accent-soft)]"
-                        : "border-[var(--border)] hover:border-[var(--series-equity)]"
-                    }`}
-                  >
-                    {o.label}
-                  </button>
-                ))}
+                {q.options.map((label, oi) => {
+                  const score = oi + 1;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => {
+                        const next = [...riskAnswers];
+                        next[qi] = score;
+                        setRiskAnswers(next);
+                        if (next.filter(Boolean).length === t.wizard.risk.length) finish(next);
+                      }}
+                      aria-pressed={riskAnswers[qi] === score}
+                      className={`rounded-xl border px-4 py-3.5 text-left transition ${
+                        riskAnswers[qi] === score
+                          ? "border-[var(--series-equity)] bg-[var(--accent-soft)]"
+                          : "border-[var(--border)] hover:border-[var(--series-equity)]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             </fieldset>
           ))}
         </div>
       )}
 
-      <div className="mt-7 flex items-center gap-3">
+      {/* A running plain-language recap, so nobody has to remember what they
+          already answered or page backwards to check. */}
+      {step > 0 && (
+        <dl className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-[var(--border)] pt-4 text-xs text-muted">
+          <Recap label={steps[0]} value={selected.name} />
+          {step > 1 && (
+            <Recap
+              label={steps[1]}
+              value={`${t.wizard.yearsOld(currentAge)} → ${t.wizard.atAge(retirementAge)}`}
+            />
+          )}
+          {step > 2 && (
+            <Recap
+              label={steps[2]}
+              value={`${money(savings)} + ${money(monthlyContribution)} ${t.wizard.perMonth}`}
+            />
+          )}
+          {step > 3 && <Recap label={steps[3]} value={money(desiredMonthlyIncome)} />}
+        </dl>
+      )}
+
+      <div className="mt-6 flex items-center gap-3">
         {step > 0 && (
           <button type="button" onClick={() => setStep(step - 1)} className="btn-ghost">
-            Back
+            {t.wizard.back}
           </button>
         )}
-        {step < STEPS.length - 1 && (
+        {step < steps.length - 1 && (
           <button
             type="button"
             onClick={() => setStep(step + 1)}
             disabled={!canAdvance}
             className="btn-primary disabled:opacity-40"
           >
-            Continue
+            {t.wizard.next}
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+function Recap({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-1.5">
+      <dt>{label}:</dt>
+      <dd className="font-medium text-secondary">{value}</dd>
     </div>
   );
 }
@@ -253,43 +287,12 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="mb-2 block font-medium">{label}</span>
+    <div>
+      <p className="mb-3 text-lg font-medium">{label}</p>
       {children}
       {help && (
-        <span className={`mt-2 block text-sm ${invalid ? "text-[var(--loss)]" : "text-muted"}`}>
-          {help}
-        </span>
+        <p className={`mt-3 text-sm ${invalid ? "text-[var(--loss)]" : "text-muted"}`}>{help}</p>
       )}
-    </label>
-  );
-}
-
-function NumberInput({
-  value,
-  onChange,
-  min,
-  max,
-  step = 1,
-  label,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-  min?: number;
-  max?: number;
-  step?: number;
-  label: string;
-}) {
-  return (
-    <input
-      type="number"
-      aria-label={label}
-      value={value}
-      min={min}
-      max={max}
-      step={step}
-      onChange={(e) => onChange(e.target.value === "" ? 0 : Number(e.target.value))}
-      className="input"
-    />
+    </div>
   );
 }
