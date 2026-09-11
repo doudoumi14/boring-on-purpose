@@ -3,6 +3,7 @@
 import { AllocationChart } from "@/components/AllocationChart";
 import { FeeChart } from "@/components/FeeChart";
 import { ProjectionChart } from "@/components/ProjectionChart";
+import { WhatToBuy } from "@/components/WhatToBuy";
 import type { Answers } from "@/components/Wizard";
 import { getCountry } from "@/lib/countries";
 import { buildPlan } from "@/lib/finance";
@@ -65,6 +66,8 @@ export function Results({ answers, onRestart }: { answers: Answers; onRestart: (
           companies — not individually chosen shares. {country.fundGuidance}
         </p>
       </section>
+
+      <WhatToBuy country={country} />
 
       <section className="card">
         <ProjectionChart

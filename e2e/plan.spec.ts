@@ -122,6 +122,34 @@ test.describe("Boring on Purpose", () => {
     await expect(page.getByText("Stocks & Shares ISA")).toBeVisible();
   });
 
+  test("names country-appropriate example funds, and never US-domiciled ones abroad", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await fillWizard(page, { country: "CA" });
+    await answerRisk(page, "mid");
+    await expect(page.getByText("VEQT")).toBeVisible();
+    await expect(page.getByText(/not recommendations/i)).toBeVisible();
+
+    await page.getByRole("button", { name: "Start over" }).click();
+    await page.getByLabel("Country").selectOption("FR");
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Continue" }).click();
+    await answerRisk(page, "mid");
+    // A French PEA cannot hold the Canadian or US products at all.
+    await expect(page.getByText("CW8")).toBeVisible();
+    await expect(page.getByText("VEQT")).toHaveCount(0);
+    await expect(page.getByText("VTI")).toHaveCount(0);
+  });
+
+  test("teaches the criteria, not just the tickers", async ({ page }) => {
+    await page.goto("/");
+    await fillWizard(page);
+    await answerRisk(page, "mid");
+    await expect(page.getByText(/How to recognise a good one yourself/i)).toBeVisible();
+    await expect(page.getByText(/less than about 0.30% a year/i)).toBeVisible();
+    await expect(page.getByText(/The trap to avoid in Canada/i)).toBeVisible();
+  });
+
   test("will not let retirement age precede current age", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /build my plan/i }).click();
