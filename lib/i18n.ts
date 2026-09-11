@@ -30,6 +30,15 @@ export const dict = {
       secondary: "Why this works",
     },
 
+    disclaimer: {
+      badge: "A learning tool — not financial advice",
+      resultsTitle: "Remember: this is a learning tool, not financial advice",
+      resultsBody:
+        "The numbers below are an illustration worked out from five answers and some general assumptions. They are a starting point for understanding how this works — not a recommendation about your own money, and not a prediction. Nobody here knows your tax situation, your debts, your job security or your health.",
+      checkFirst:
+        "Before acting on any of it, check it against your own circumstances. If you want help, look for an advisor who charges one flat fee rather than a yearly percentage of your savings.",
+    },
+
     intro: {
       title: "Five questions. No signup, no email.",
       body: "Everything is worked out on your own computer. Nothing you type is sent anywhere or saved.",
@@ -105,7 +114,7 @@ export const dict = {
       allocationWhat:
         "Shares here means one fund that owns a small piece of thousands of companies at once — never companies you choose yourself.",
 
-      orderTitle: "Do this, in this order",
+      orderTitle: "The order people usually fill these",
       orderEnd:
         "Then set up an automatic transfer every month and stop looking at it. People who check often tend to sell when prices fall, which is the main way ordinary savers lose money.",
     },
@@ -229,6 +238,15 @@ export const dict = {
       secondary: "Pourquoi ça marche",
     },
 
+    disclaimer: {
+      badge: "Un outil pédagogique — pas un conseil financier",
+      resultsTitle: "Rappel : ceci est un outil pédagogique, pas un conseil financier",
+      resultsBody:
+        "Les chiffres ci-dessous sont une illustration calculée à partir de cinq réponses et d'hypothèses générales. C'est un point de départ pour comprendre le fonctionnement — pas une recommandation sur votre argent, ni une prévision. Personne ici ne connaît votre situation fiscale, vos dettes, la stabilité de votre emploi ou votre santé.",
+      checkFirst:
+        "Avant d'agir, vérifiez tout au regard de votre situation. Si vous voulez de l'aide, cherchez un conseiller qui facture un tarif fixe plutôt qu'un pourcentage annuel de votre épargne.",
+    },
+
     intro: {
       title: "Cinq questions. Sans inscription, sans courriel.",
       body: "Tout est calculé sur votre propre ordinateur. Rien de ce que vous saisissez n'est envoyé ni conservé.",
@@ -318,7 +336,7 @@ export const dict = {
       allocationWhat:
         "Ici, actions veut dire un seul fonds qui possède une petite part de milliers d'entreprises à la fois — jamais des entreprises que vous choisissez vous-même.",
 
-      orderTitle: "Faites ceci, dans cet ordre",
+      orderTitle: "L'ordre dans lequel on remplit ces comptes, en général",
       orderEnd:
         "Ensuite, mettez en place un virement automatique chaque mois et arrêtez de regarder. Ceux qui vérifient souvent ont tendance à vendre quand les prix baissent, et c'est la principale façon dont les épargnants perdent de l'argent.",
     },

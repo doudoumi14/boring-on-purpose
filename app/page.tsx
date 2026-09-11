@@ -1,5 +1,6 @@
 "use client";
 
+import { DisclaimerBadge } from "@/components/Disclaimer";
 import { Hero } from "@/components/Hero";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Learn } from "@/components/Learn";
@@ -23,7 +24,8 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-20 px-5 py-8 sm:px-8 sm:py-12">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <DisclaimerBadge t={t} />
         <LanguageToggle lang={lang} onChange={setLang} />
       </div>
 

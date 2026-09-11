@@ -246,7 +246,43 @@ test.describe("Boring on Purpose", () => {
     await expect(page.getByText(/€/).first()).toBeVisible();
   });
 
-  test("carries the disclaimer", async ({ page }) => {
+  test("says it is a learning tool before a single question is answered", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByText(/a learning tool — not financial advice/i)).toBeVisible();
+  });
+
+  test("repeats the warning above the results, where the numbers appear", async ({ page }) => {
+    await page.goto("/");
+    await fillWizard(page);
+    await answerRisk(page, "mid");
+
+    const warning = page.getByText(/this is a learning tool, not financial advice/i);
+    await expect(warning).toBeVisible();
+    await expect(page.getByText(/not a recommendation about your own money/i)).toBeVisible();
+    await expect(page.getByText(/flat fee rather than a yearly percentage/i)).toBeVisible();
+
+    // It has to come before the target figure, not after it.
+    const warningY = (await warning.boundingBox())!.y;
+    const targetY = (await page.getByText("$1,050,000").first().boundingBox())!.y;
+    expect(warningY).toBeLessThan(targetY);
+  });
+
+  test("does not phrase the account order as an instruction", async ({ page }) => {
+    await page.goto("/");
+    await fillWizard(page);
+    await answerRisk(page, "mid");
+    // "Do this, in this order" reads as advice; this is a learning tool.
+    await expect(page.getByText("Do this, in this order")).toHaveCount(0);
+    await expect(page.getByText(/order people usually fill these/i)).toBeVisible();
+  });
+
+  test("warns in French too", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "FR" }).click();
+    await expect(page.getByText(/outil pédagogique — pas un conseil financier/i)).toBeVisible();
+  });
+
+  test("keeps the full notice in the footer", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByText(/education, not financial advice/i)).toBeVisible();
   });

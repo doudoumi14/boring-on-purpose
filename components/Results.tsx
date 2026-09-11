@@ -1,6 +1,7 @@
 "use client";
 
 import { AllocationChart } from "@/components/AllocationChart";
+import { DisclaimerPanel } from "@/components/Disclaimer";
 import { FeeChart } from "@/components/FeeChart";
 import { ProjectionChart } from "@/components/ProjectionChart";
 import { WhatToBuy } from "@/components/WhatToBuy";
@@ -32,6 +33,8 @@ export function Results({
 
   return (
     <div className="flex flex-col gap-12">
+      <DisclaimerPanel t={t} />
+
       <section>
         <p className="text-xs tracking-widest text-muted uppercase">{t.results.eyebrow}</p>
         <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
