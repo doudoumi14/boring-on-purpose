@@ -1,69 +1,87 @@
-import Image from "next/image";
+"use client";
+
+import { Hero } from "@/components/Hero";
+import { Learn } from "@/components/Learn";
+import { Results } from "@/components/Results";
+import { Wizard, type Answers } from "@/components/Wizard";
+import { useRef, useState } from "react";
+
+type Stage = "intro" | "wizard" | "results";
 
 export default function Home() {
+  const [stage, setStage] = useState<Stage>("intro");
+  const [answers, setAnswers] = useState<Answers | null>(null);
+  const planRef = useRef<HTMLDivElement>(null);
+
+  function start() {
+    setStage("wizard");
+    requestAnimationFrame(() => planRef.current?.scrollIntoView({ behavior: "smooth" }));
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <main className="mx-auto flex max-w-5xl flex-col gap-20 px-5 py-12 sm:px-8 sm:py-16">
+      <Hero onStart={start} />
+
+      <div ref={planRef} className="scroll-mt-8">
+        {stage === "intro" && (
+          <section className="card text-center">
+            <h2 className="text-xl font-semibold">Five questions. No signup, no email.</h2>
+            <p className="mx-auto mt-2 max-w-md text-secondary">
+              Everything is worked out in your browser. Nothing you type is sent anywhere or stored.
+            </p>
+            <button type="button" onClick={start} className="btn-primary mt-5">
+              Start
+            </button>
+          </section>
+        )}
+
+        {stage === "wizard" && (
+          <Wizard
+            onComplete={(a) => {
+              setAnswers(a);
+              setStage("results");
+              requestAnimationFrame(() => planRef.current?.scrollIntoView({ behavior: "smooth" }));
+            }}
+          />
+        )}
+
+        {stage === "results" && answers && (
+          <Results
+            answers={answers}
+            onRestart={() => {
+              setAnswers(null);
+              setStage("wizard");
+            }}
+          />
+        )}
+      </div>
+
+      <Learn />
+
+      <footer className="border-t border-[var(--border)] pt-8 text-sm text-muted">
+        <p className="font-semibold text-secondary">This is education, not financial advice.</p>
+        <p className="mt-2 max-w-3xl">
+          Boring on Purpose is not a licensed financial advisor and knows nothing about your
+          circumstances beyond the five answers you gave. The projections use long-run historical
+          real returns — {""}
+          5% a year for equities and 1.5% for bonds, after inflation — and the 4% withdrawal rule.
+          Those are planning assumptions, not promises: real markets do not deliver an even 5% a
+          year, and your own results will differ. Tax rules vary by country and change. Before
+          acting on anything here, check it against your own situation, and consider a fee-only
+          advisor who charges a flat fee rather than a percentage of your savings.
+        </p>
+        <p className="mt-4">
+          Built by{" "}
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            className="underline hover:text-[var(--series-equity)]"
+            href="https://github.com/doudoumi14"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
+            Adem Brouri
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          . Open source — the maths lives in{" "}
+          <code className="text-xs">lib/finance.ts</code> and is covered by tests.
+        </p>
+      </footer>
+    </main>
   );
 }
