@@ -57,7 +57,7 @@ export function AmountField({
             type="button"
             onClick={() => onChange(p)}
             aria-pressed={value === p}
-            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+            className={`rounded-md border px-3 py-1.5 text-sm font-medium transition ${
               value === p
                 ? "border-[var(--series-equity)] bg-[var(--accent-soft)] text-[var(--series-equity)]"
                 : "border-[var(--border)] hover:border-[var(--series-equity)]"

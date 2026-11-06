@@ -240,7 +240,7 @@ test.describe("Boring on Purpose", () => {
 
   test("switches the whole page to French and remembers the choice", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "FR" }).click();
+    await page.getByRole("button", { name: "Français" }).click();
 
     await expect(page.locator("html")).toHaveAttribute("lang", "fr");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Investir");
@@ -251,7 +251,7 @@ test.describe("Boring on Purpose", () => {
 
   test("gives French users French accounts, funds and the right currency", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "FR" }).click();
+    await page.getByRole("button", { name: "Français" }).click();
     await page.getByRole("button", { name: /Créer mon plan/i }).click();
     await page.getByLabel("Country").selectOption("FR");
     for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Suivant", exact: true }).click();
@@ -299,7 +299,7 @@ test.describe("Boring on Purpose", () => {
 
   test("warns in French too", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "FR" }).click();
+    await page.getByRole("button", { name: "Français" }).click();
     await expect(page.getByText(/outil pédagogique, pas un conseil financier/i)).toBeVisible();
   });
 

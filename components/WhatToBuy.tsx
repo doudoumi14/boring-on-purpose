@@ -22,7 +22,7 @@ export function WhatToBuy({
         {country.examples.map((f) => (
           <li
             key={f.name}
-            className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4"
+            className="rounded-md border border-[var(--border)] bg-[var(--surface-2)] p-4"
           >
             <div className="flex flex-wrap items-baseline gap-x-2">
               <span className="font-semibold">{f.name}</span>
@@ -37,7 +37,7 @@ export function WhatToBuy({
         ))}
       </ul>
 
-      <div className="mt-6 rounded-xl border border-[var(--series-bonds)]/40 bg-[var(--surface-2)] p-4">
+      <div className="mt-6 rounded-md border border-[var(--series-bonds)]/40 bg-[var(--surface-2)] p-4">
         <p className="text-sm font-semibold text-[var(--series-bonds)]">
           {t.buy.trap(country.inCountry)}
         </p>
@@ -51,7 +51,7 @@ export function WhatToBuy({
         {country.bondExamples.map((f) => (
           <li
             key={f.name}
-            className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4"
+            className="rounded-md border border-[var(--border)] bg-[var(--surface-2)] p-4"
           >
             <div className="flex flex-wrap items-baseline gap-x-2">
               <span className="font-semibold">{f.name}</span>
@@ -66,7 +66,7 @@ export function WhatToBuy({
         ))}
       </ul>
 
-      <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm text-secondary">
+      <p className="mt-4 rounded-md border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm text-secondary">
         {country.bondNote}
       </p>
 

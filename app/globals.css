@@ -51,13 +51,35 @@
   --color-foreground: var(--ink);
   --color-secondary: var(--secondary-ink);
   --color-muted: var(--muted-ink);
+  --font-sans: var(--font-text), system-ui, sans-serif;
+  --font-serif: var(--font-display), Georgia, serif;
 }
 
 body {
   background: var(--page);
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  font-kerning: normal;
   -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  h1,
+  h2 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  p,
+  li {
+    text-wrap: pretty;
+  }
+}
+
+a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
 }
 
 .text-secondary {
@@ -70,7 +92,7 @@ body {
 .card {
   background: var(--surface-1);
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: 6px;
   padding: 1.5rem;
 }
 
@@ -78,7 +100,7 @@ body {
   width: 100%;
   background: var(--surface-1);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 6px;
   padding: 0.7rem 0.9rem;
   font-size: 1rem;
   color: var(--ink);
@@ -92,21 +114,22 @@ body {
   background: var(--series-equity);
   color: #fff;
   border: none;
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 0.7rem 1.4rem;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
 }
 .btn-primary:hover {
-  opacity: 0.92;
+  background: var(--ink);
+  color: var(--page);
 }
 
 .btn-ghost {
   background: transparent;
   color: inherit;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 0.7rem 1.4rem;
   font-weight: 600;
   font-size: 0.95rem;

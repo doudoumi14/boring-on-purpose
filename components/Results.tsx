@@ -37,7 +37,7 @@ export function Results({
       <DisclaimerPanel t={t} />
 
       <section>
-        <p className="text-xs tracking-widest text-muted uppercase">{t.results.eyebrow}</p>
+        <p className="text-sm text-muted">{t.results.eyebrow}</p>
         <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
           {plan.onTrack ? t.results.onTrack : t.results.gap}
         </h2>
@@ -73,7 +73,7 @@ export function Results({
         </p>
 
         {shortfall > 0 && (
-          <p className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm">
+          <p className="mt-4 rounded-md border border-[var(--border)] bg-[var(--surface-2)] p-4 text-sm">
             {t.results.shortfall(
               money(answers.monthlyContribution),
               money(plan.requiredMonthly),
@@ -147,8 +147,8 @@ function Stat({
   tone?: "good" | "warn";
 }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
-      <dt className="text-xs tracking-wider text-muted uppercase">{label}</dt>
+    <div className="rounded-md border border-[var(--border)] bg-[var(--surface-2)] p-4">
+      <dt className="text-sm text-muted">{label}</dt>
       <dd
         className={`mt-1 text-2xl font-bold ${
           tone === "good" ? "text-[var(--good)]" : tone === "warn" ? "text-[var(--loss)]" : ""

@@ -2,6 +2,8 @@
 
 import type { Lang } from "@/lib/i18n";
 
+// One link to the other language, named in that language: the convention of
+// bilingual Canadian sites, and one control instead of a two-state pill.
 export function LanguageToggle({
   lang,
   onChange,
@@ -9,27 +11,15 @@ export function LanguageToggle({
   lang: Lang;
   onChange: (l: Lang) => void;
 }) {
+  const other: Lang = lang === "en" ? "fr" : "en";
   return (
-    <div
-      className="inline-flex rounded-full border border-[var(--border)] p-0.5"
-      role="group"
-      aria-label="Language / Langue"
+    <button
+      type="button"
+      lang={other}
+      onClick={() => onChange(other)}
+      className="text-[15px] font-semibold underline decoration-[var(--border)] decoration-2 underline-offset-[0.3em] transition-colors hover:decoration-[var(--ink)]"
     >
-      {(["en", "fr"] as const).map((code) => (
-        <button
-          key={code}
-          type="button"
-          onClick={() => onChange(code)}
-          aria-pressed={lang === code}
-          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-            lang === code
-              ? "bg-[var(--series-equity)] text-white"
-              : "text-[var(--muted-ink)] hover:text-[var(--ink)]"
-          }`}
-        >
-          {code === "en" ? "EN" : "FR"}
-        </button>
-      ))}
-    </div>
+      {other === "fr" ? "Français" : "English"}
+    </button>
   );
 }

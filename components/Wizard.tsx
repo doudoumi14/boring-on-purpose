@@ -91,7 +91,7 @@ export function Wizard({
         ))}
       </ol>
 
-      <p className="mb-5 text-xs tracking-widest text-muted uppercase">
+      <p className="mb-5 text-sm text-muted">
         {t.wizard.stepOf(step + 1, steps.length)}
       </p>
 
@@ -225,7 +225,7 @@ export function Wizard({
                         if (next.filter(Boolean).length === t.wizard.risk.length) finish(next);
                       }}
                       aria-pressed={riskAnswers[qi] === score}
-                      className={`rounded-xl border px-4 py-3.5 text-left transition ${
+                      className={`rounded-md border px-4 py-3.5 text-left transition ${
                         riskAnswers[qi] === score
                           ? "border-[var(--series-equity)] bg-[var(--accent-soft)]"
                           : "border-[var(--border)] hover:border-[var(--series-equity)]"
@@ -242,8 +242,8 @@ export function Wizard({
       )}
 
       {preview && step >= 2 && step < 4 && (
-        <div className="mt-8 rounded-2xl border border-[var(--series-equity)]/40 bg-[var(--accent-soft)] p-5">
-          <p className="text-xs tracking-wider text-muted uppercase">{t.wizard.livePreview}</p>
+        <div className="mt-8 rounded-md border border-[var(--series-equity)]/40 bg-[var(--accent-soft)] p-5">
+          <p className="text-sm text-muted">{t.wizard.livePreview}</p>
           <p className="mt-1 text-3xl font-bold text-[var(--series-equity)]">
             <CountUp value={preview.projectedWithCurrentSaving} format={money} durationMs={450} />
           </p>

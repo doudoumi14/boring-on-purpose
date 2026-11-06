@@ -1,6 +1,5 @@
 "use client";
 
-import { DisclaimerBadge } from "@/components/Disclaimer";
 import { Hero } from "@/components/Hero";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Learn } from "@/components/Learn";
@@ -24,18 +23,18 @@ export default function Home() {
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-20 px-5 py-8 sm:px-8 sm:py-12">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <DisclaimerBadge t={t} />
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] pb-4">
+        <p className="font-serif text-lg font-semibold">{t.hero.eyebrow}</p>
         <LanguageToggle lang={lang} onChange={setLang} />
-      </div>
+      </header>
 
       <Hero t={t} onStart={start} />
 
       <div ref={planRef} className="scroll-mt-8">
         {stage === "intro" && (
-          <section className="card text-center">
-            <h2 className="text-xl font-semibold">{t.intro.title}</h2>
-            <p className="mx-auto mt-2 max-w-md text-secondary">{t.intro.body}</p>
+          <section className="card">
+            <h2 className="text-2xl font-semibold">{t.intro.title}</h2>
+            <p className="mt-2 max-w-md text-secondary">{t.intro.body}</p>
             <button type="button" onClick={start} className="btn-primary mt-5">
               {t.intro.start}
             </button>

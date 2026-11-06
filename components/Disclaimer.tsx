@@ -11,16 +11,16 @@ import type { Dict } from "@/lib/i18n";
  */
 export function DisclaimerBadge({ t }: { t: Dict }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 text-xs font-medium text-secondary">
+    <p className="inline-flex items-center gap-2 text-sm text-secondary">
       <InfoIcon />
       {t.disclaimer.badge}
-    </span>
+    </p>
   );
 }
 
 export function DisclaimerPanel({ t }: { t: Dict }) {
   return (
-    <aside className="rounded-2xl border-2 border-[var(--series-bonds)]/50 bg-[var(--series-bonds)]/5 p-5">
+    <aside className="rounded-md border-l-4 border-[var(--series-bonds)] bg-[var(--surface-2)] p-5">
       <p className="flex items-center gap-2 font-semibold text-[var(--series-bonds)]">
         <InfoIcon />
         {t.disclaimer.resultsTitle}
